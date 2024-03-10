@@ -3,6 +3,8 @@ package personnages;
 public class Romain {
 	private String nom;
 	private int force;
+	private Equipement[] equipements = new Equipement[2]; // Tableau d'équipements de taille 2
+	private int nbEquipements = 0; // compteur initialisé à 0
 
 	public Romain(String nom, int force) {
 		assert force > 0 : "La force d'un Romain doit être positive";
@@ -25,21 +27,54 @@ public class Romain {
 	public void recevoirCoup(int forceCoup) {
 		assert force > 0 : "La force d'un Romain est positive"; // Précondition
 		int forceInitiale = force;
-		
+
 		force -= forceCoup;
 		if (force > 0) {
 			parler("Aïe");
 		} else {
 			parler("J'abandonne...");
 		}
-		
+
 		// Postcondition : la force après avoir reçu un coup diminue
 		assert force < forceInitiale : "La force d'un Romain diminue après voir reçu un coup";
 	}
 
+	private boolean possedeDejaEquipement(Equipement equipement) {
+		for (int i = 0; i < nbEquipements; i++) {
+			if (equipements[i] == equipement) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void sEquiper(Equipement equipement) {
+		switch (nbEquipements) {
+		case 2:
+			parler("est déjà bien protégé !");
+			break;
+		case 1:
+			if (possedeDejaEquipement(equipement)) {
+				parler("possède déjà un " + equipement + " !");
+			} else {
+				equipements[nbEquipements++] = equipement;
+				parler("s'équipe avec un " + equipement + ".");
+			}
+			break;
+		case 0:
+			equipements[nbEquipements++] = equipement;
+			parler("s'équipe avec un " + equipement + ".");
+			break;
+		}
+	}
+
 	public static void main(String[] args) {
-		// Créer l'objet romain de la classe Romain
 		Romain romain = new Romain("Minus", 6);
+		
+		romain.sEquiper(Equipement.CASQUE);
+        romain.sEquiper(Equipement.CASQUE);
+        romain.sEquiper(Equipement.BOUCLIER);
+        romain.sEquiper(Equipement.CASQUE);
 
 		// Vérification de la méthode prendreParole
 		System.out.println(romain.prendreParole());
@@ -49,5 +84,6 @@ public class Romain {
 
 		// Vérification de la méthode recevoirCoup
 		romain.recevoirCoup(5);
+
 	}
 }
